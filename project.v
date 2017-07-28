@@ -187,7 +187,7 @@ module counter(enable, clock, winner1, winner2, out1, out2, out3, out4, tie);
 	output [3:0] out4;
 	wire [27:0] output1;
 	wire [27:0]d = 28'b0010111110101111000001111111;
-
+	// uses rate divider to create a puase for 1 second
 	rate_divider f1(
 						.enable(enable),
 						.start(start),
@@ -195,7 +195,7 @@ module counter(enable, clock, winner1, winner2, out1, out2, out3, out4, tie);
 						.clock(clock),
 						.q(output1)
 						);
-
+	// assigns input for the display_counter module
 	assign display_counter_enable = (output1 == 28'b0000000000000000000000000000) ? 1 : 0;
 
 	display_counter f2(
