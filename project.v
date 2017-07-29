@@ -49,6 +49,7 @@ module project (SW, LEDR, KEY, LEDG, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, H
 	hex_decoder h3 (.hex_digit(counter_out1),
 						.segments(HEX4));
 
+	// places a move for player 1 where there is a space on the grid and displays it on the led
 	player1_input input_p1(
 								.d(SW[8:0]),
 								.in1(in1),
@@ -61,12 +62,12 @@ module project (SW, LEDR, KEY, LEDG, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, H
 								.winner2(winner2),
 								.tie(tie)
 								);
-	
+	// checks if player 1 wins
 	check_winner win1 (
 							.in(out2),
 							.out(winner1)
 							);
-
+         // places a move for player 2 where there is a space on the grid and displayes it on the led
 	player2_input input_p2 (
 									.d(SW[17:9]),
 									.in1(in1),
@@ -78,12 +79,12 @@ module project (SW, LEDR, KEY, LEDG, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, H
 									.winner2(winner2),
 									.tie(tie)
 									);
-	
+	// checks if player2 wins
 	check_winner win2 (
 							.in(out1),
 							.out(winner2)
 							);
-
+	// displays a winner if there is a winner or tie if it is a tie
 	display_winner(
 					.HEX3(HEX3),
 					.winner1(winner1),
@@ -92,7 +93,7 @@ module project (SW, LEDR, KEY, LEDG, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, H
 					.out2(out2),
 					.tie(tie)
 					);
-
+	// displays the moves played by player 1 or player 2 on the hexs
 	display_tokens tokens(
 								.in1(out2),
 								.in2(out1),
@@ -187,7 +188,7 @@ module counter(enable, clock, winner1, winner2, out1, out2, out3, out4, tie);
 	output [3:0] out4;
 	wire [27:0] output1;
 	wire [27:0]d = 28'b0010111110101111000001111111;
-	// uses rate divider to create a puase for 1 second
+	// uses rate divider to create a pause for 1 second
 	rate_divider f1(
 						.enable(enable),
 						.start(start),
@@ -197,7 +198,7 @@ module counter(enable, clock, winner1, winner2, out1, out2, out3, out4, tie);
 						);
 	// assigns input for the display_counter module
 	assign display_counter_enable = (output1 == 28'b0000000000000000000000000000) ? 1 : 0;
-
+	// displayes the timer on the hex 7 to hex3 and freezes if there is a winner or a tie
 	display_counter f2(
 						  .enable(display_counter_enable),
 						  .start(REGout),
@@ -214,6 +215,7 @@ module counter(enable, clock, winner1, winner2, out1, out2, out3, out4, tie);
 endmodule
 
 module rate_divider(enable, start, d, clock, q);
+	// declares inputs, outputs and reg
 	input enable;
 	input clock;
 	input start;
@@ -222,21 +224,22 @@ module rate_divider(enable, start, d, clock, q);
 	output [27:0] q;
 	reg [27:0] out;
 	assign q = out;
-
+	
 	always @(posedge clock)
 	begin
 		if (start)
 			out <= d;
-		if (out == 28'b0000000000000000000000000000) // when q is the
+		if (out == 28'b0000000000000000000000000000) // when out is the 0
 			out <= d; // q reset to 0
-		else if(enable == 1'b1) // decrement q only when enable is 1
-			out <= out - 1'b1; // decrement q
+		else if(enable == 1'b1) // decrement out only when enable is 1
+			out <= out - 1'b1; // decrement out
 		end
 
 endmodule
 
 
 module display_counter(enable, start, clock, winner1, winner2, tie, q1, q2, q3, q4);
+	// declares all the inputs, outputs and reg
 	input enable;
 	input tie;
 	input clock;
@@ -259,7 +262,7 @@ module display_counter(enable, start, clock, winner1, winner2, tie, q1, q2, q3, 
 	
 	always @(posedge clock)
 	begin
-	
+		// if there is a winner or tie then the timer stays where it is
 		if(winner1 | winner2 | tie)
 		begin
 			out1 <= out1;
@@ -267,7 +270,7 @@ module display_counter(enable, start, clock, winner1, winner2, tie, q1, q2, q3, 
 			out3 <= out3;
 			out4 <= out4;
 		end
-		
+		// if start is 1'b1, then starts from the 0 
 		else if (start)
 		begin
 			out1 <= d;
@@ -276,24 +279,26 @@ module display_counter(enable, start, clock, winner1, winner2, tie, q1, q2, q3, 
 			out4 <= d;
 		end
 		
+		// if enable, then enters the else if statement
 		else if (enable)
 		begin
+			// if out1 is less than 9, then increments it
 			if (out1 < 4'b1001)
 				out1 <= out1 + 1'b1;
-			
+			// if out1 is 9 then sets out 1 to 0 and increments out2
 			if(out1 == 4'b1001)
 			begin
 				out1 <= 4'b0000;
 				out2 <= out2 + 1'b1;
 			end
-			
+			// if out1 is 9 and out2 is 5, then sets out1 and out2 to 0 and increments out3
 			if(out2 == 4'b0101 && out1 == 4'b1001)
 			begin
 				out2 <= 4'b0000;
 				out1 <= 4'b0000;
 				out3 <= out3 + 1'b1;
 			end
-			
+			// out3 is 9, then sets out3 to 0, and increments out4
 			if (out3 == 4'b1001)
 			begin
 				out3 <= 4'b0000;
