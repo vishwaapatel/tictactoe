@@ -359,11 +359,6 @@ module player1_input(d, in1, in2, clk, q_out2, LED1, LED2, winner1, winner2, tie
 		// If there is no winner then the if statement is entered
 		if(~winner1 && ~winner2 && ~tie)
 		begin
-		/*
-		// if(number of move by player 1 == number of moves by player 2)
-
-		*/
-
 		// Each time the always block runs, the if and else statements determine which LED's to turns on and
 		// changes the value in out2 appropriately.
 
@@ -539,8 +534,6 @@ module player2_input(d, in1, in2, clk, q_out1, LED, winner1, winner2, tie);
 		// if there is no winner, then the if statement is entered
 		if(~winner1 && ~winner2 && ~tie)
 		begin
-
-		// Check if the number of moves of player2 is one less than the number of moves of player1
 			// if switch d[0] is on and if no player has place any token in the first box, then the bit at the 0th position in out1 changes to 1'b1 and led [0] turns on
 			if (d[0] == 1'b1 && in1[0] == 1'b0 && in2[0] == 1'b0)
 			begin
