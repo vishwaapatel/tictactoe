@@ -85,7 +85,7 @@ module project (SW, LEDR, KEY, LEDG, HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, HEX6, H
 							.out(winner2)
 							);
 	// displays a winner if there is a winner or tie if it is a tie
-	display_winner(
+	display_winner winner_check(
 					.HEX3(HEX3),
 					.winner1(winner1),
 					.winner2(winner2),
@@ -339,7 +339,7 @@ module player1_input(d, in1, in2, clk, q_out2, LED1, LED2, winner1, winner2, tie
 	output LED1;
 	input tie;
 	input [8:0] d;
-	output [7:0]LED2;
+	output [8:0]LED2;
 	input [8:0] in1;
 	input [8:0] in2;
 	input winner1;
