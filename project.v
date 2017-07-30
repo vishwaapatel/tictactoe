@@ -364,7 +364,7 @@ module player1_input(d, in1, in2, clk, q_out2, LED1, LED2, winner1, winner2, tie
 
 		/* If the value at d[x] is 1'b1, it means that a token has already been placed at the (x+1)'th position on the TicTacToe board
 		* Positions on the TicTacToe board:
-		*             1       2               3
+		*             1               2               3
 		*             4               5               6
 		*             7               8               9
 		*/
